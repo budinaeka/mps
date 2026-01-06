@@ -19,9 +19,9 @@ if (file_exists($envPath)) {
 }
 
 $host = getenv('DB_HOST') ?: 'budina01_mps';
-$db   = getenv('DB_NAME') ?: 'puskeswan_db';
-$user = getenv('DB_USER') ?: 'admin_mps';
-$pass = getenv('DB_PASS') ?: 'Suk@bumi2213';
+$db   = getenv('DB_DATABASE') ?: 'puskeswan_db';
+$user = getenv('DB_USERNAME') ?: 'admin_mps';
+$pass = getenv('DB_PASSWORD') ?: 'Suk@bumi2213';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
