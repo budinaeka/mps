@@ -1,5 +1,5 @@
 <?php
-$host = 'mps';
+$host = 'budina01_mps';
 $db = 'puskeswan_db';
 $user = 'admin_mps';
 $pass = 'Suk@bumi2213';
@@ -9,4 +9,5 @@ try {
     echo "Connected successfully!";
 } catch(PDOException $e) {
     echo "Connection failed: " . $e->getMessage();
+
 }
