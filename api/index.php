@@ -18,8 +18,8 @@ $type = isset($_GET['type']) ? $_GET['type'] : '';
 // Whitelist tables to prevent SQL injection via table name
 $allowed_tables = [
     'users', 'pengobatan', 'vaksinasi', 'monitoring', 
-    'surveilans', 'surat', 'stok_obat', 'pemakaian_obat', 
-    'kegiatan_lain', 'kunjungan_tamu'
+    'surveilans', 'phms', 'surat', 'stok_obat', 'pemakaian_obat', 
+    'kegiatan_lain', 'kunjungan_tamu', 'kreasi_konten'
 ];
 
 if ($table && !in_array($table, $allowed_tables)) {
@@ -36,7 +36,11 @@ switch ($method) {
             exit;
         }
 
-        $sql = "SELECT * FROM $table";
+        if ($table === 'users') {
+            $sql = "SELECT id, username, name, role, created_at FROM $table";
+        } else {
+            $sql = "SELECT * FROM $table";
+        }
         $params = [];
         $where = [];
 

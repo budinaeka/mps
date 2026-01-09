@@ -1,8 +1,8 @@
 <?php
-$host = 'budina01_mps';
-$db_name = 'puskeswan_db';
-$username = 'admin_mps';
-$password = 'Suk@bumi2213';
+$host = getenv('DB_HOST') ?: 'localhost';
+$db_name = getenv('DB_NAME') ?: 'puskeswan_db';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8", $username, $password);
@@ -10,3 +10,4 @@ try {
 } catch(PDOException $e) {
     die(json_encode(['error' => 'Connection failed: ' . $e->getMessage()]));
 }
+?>
