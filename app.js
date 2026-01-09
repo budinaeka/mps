@@ -18,6 +18,10 @@ const App = {
         }
     },
 
+    canEdit: () => {
+        return App.state.currentUser && App.state.currentUser.role !== 'viewer';
+    },
+
     handleRoute: () => {
         const hash = window.location.hash.slice(1) || 'dashboard';
         
@@ -399,9 +403,10 @@ const App = {
                          `<input id="sw_username" type="text" class="form-control mb-2" value="${user.username}">` +
                          `<input id="sw_name" type="text" class="form-control mb-2" value="${user.name}">` +
                          `<select id="sw_role" class="form-select mb-2">
-                             <option value="staff" ${user.role === 'staff' ? 'selected' : ''}>Staff</option>
-                             <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-                          </select>` +
+                            <option value="staff" ${user.role === 'staff' ? 'selected' : ''}>Staff</option>
+                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                            <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>Viewer</option>
+                         </select>` +
                          `<input id="sw_password" type="password" class="form-control mb-2" placeholder="Ganti password (opsional)">`,
                      focusConfirm: false,
                      showCancelButton: true,
@@ -2158,117 +2163,86 @@ const Views = {
                 <h5 class="text-secondary mb-0"><i class="bi bi-calendar3 me-2"></i>${currentDate}</h5>
             </div>
             
-            <!-- Baris 1: Kasus PHMS -->
-            <div class="row g-2 mb-2">
-                <!-- Kasus PHMS PMK -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-danger text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Kasus PHMS PMK</h6>
-                            <h3 class="mb-0">${stats.phms_pmk} <span class="fs-6">Ekor</span></h3>
-                        </div>
-                    </div>
+            <div class="card mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-table me-2"></i>Metrik Kinerja</h5>
                 </div>
-                <!-- Kasus PHMS LSD -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-danger text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Kasus PHMS LSD</h6>
-                            <h3 class="mb-0">${stats.phms_lsd} <span class="fs-6">Ekor</span></h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Baris 2: Vaksinasi & Pengobatan -->
-            <div class="row g-2 mb-2">
-                <!-- Vaksinasi PMK -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-success text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Vaksinasi PMK</h6>
-                            <h3 class="mb-0">${stats.vaksinasi_pmk} <span class="fs-6">Ekor</span></h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- Vaksinasi LSD -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-success text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Vaksinasi LSD</h6>
-                            <h3 class="mb-0">${stats.vaksinasi_lsd} <span class="fs-6">Ekor</span></h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- Vaksinasi Rabies -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-success text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Vaksinasi Rabies</h6>
-                            <h3 class="mb-0">${stats.vaksinasi_rabies} <span class="fs-6">Ekor</span></h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- Pengobatan -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-primary text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Pengobatan</h6>
-                            <h3 class="mb-0">${stats.pengobatan} <span class="fs-6">Ekor</span></h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Baris 3: Surveilans & Monitoring -->
-            <div class="row g-2 mb-2">
-                <!-- Surveilans -->
-                <div class="col-6 col-md-4">
-                    <div class="card card-dashboard card-dashboard-sm bg-warning text-dark h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Surveilans</h6>
-                            <h3 class="mb-0">${stats.surveilans} <span class="fs-6">Kali</span></h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- Monitoring Poktan -->
-                <div class="col-6 col-md-4">
-                    <div class="card card-dashboard card-dashboard-sm bg-info text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Mon. Poktan</h6>
-                            <h3 class="mb-0">${stats.monitoring_poktan} <span class="fs-6">Kali</span></h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- Monitoring BUMDES -->
-                <div class="col-6 col-md-4">
-                    <div class="card card-dashboard card-dashboard-sm bg-info text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Mon. BUMDES</h6>
-                            <h3 class="mb-0">${stats.monitoring_bumdes} <span class="fs-6">Kali</span></h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Baris 4: Kegiatan Lain & Kreasi Konten -->
-            <div class="row g-2 mb-4">
-                <!-- Kegiatan Lain -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-secondary text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Kegiatan Lain</h6>
-                            <h3 class="mb-0">${stats.kegiatan_lain} <span class="fs-6">Kegiatan</span></h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- Kreasi Konten -->
-                <div class="col-6 col-md-3">
-                    <div class="card card-dashboard card-dashboard-sm bg-danger text-white h-100">
-                        <div class="card-body">
-                            <h6 class="card-title">Kreasi Konten</h6>
-                            <h3 class="mb-0">${stats.kreasi_konten} <span class="fs-6">Konten</span></h3>
-                        </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Kategori</th>
+                                    <th>Sub Kategori</th>
+                                    <th class="text-end">Jumlah</th>
+                                    <th>Satuan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="align-middle">
+                                <tr>
+                                    <td rowspan="2">Kasus PHMS</td>
+                                    <td>PMK</td>
+                                    <td class="text-end">${stats.phms_pmk}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td>LSD</td>
+                                    <td class="text-end">${stats.phms_lsd}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="3">Vaksinasi</td>
+                                    <td>PMK</td>
+                                    <td class="text-end">${stats.vaksinasi_pmk}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td>LSD</td>
+                                    <td class="text-end">${stats.vaksinasi_lsd}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td>Rabies</td>
+                                    <td class="text-end">${stats.vaksinasi_rabies}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td>Pengobatan</td>
+                                    <td>-</td>
+                                    <td class="text-end">${stats.pengobatan}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td>Surveilans</td>
+                                    <td>-</td>
+                                    <td class="text-end">${stats.surveilans}</td>
+                                    <td>Kali</td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="2">Monitoring</td>
+                                    <td>Kelompok Tani</td>
+                                    <td class="text-end">${stats.monitoring_poktan}</td>
+                                    <td>Kali</td>
+                                </tr>
+                                <tr>
+                                    <td>BUMDES</td>
+                                    <td class="text-end">${stats.monitoring_bumdes}</td>
+                                    <td>Kali</td>
+                                </tr>
+                                <tr>
+                                    <td>Kegiatan Lain</td>
+                                    <td>-</td>
+                                    <td class="text-end">${stats.kegiatan_lain}</td>
+                                    <td>Kegiatan</td>
+                                </tr>
+                                <tr>
+                                    <td>Kreasi Konten</td>
+                                    <td>-</td>
+                                    <td class="text-end">${stats.kreasi_konten}</td>
+                                    <td>Konten</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -2331,8 +2305,10 @@ const Views = {
                 <td>${i.tujuan}</td>
                 <td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-warning edit-kunjungan-btn" data-id="${i.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger delete-kunjungan-btn" data-id="${i.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -2348,9 +2324,11 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2" id="downloadKunjunganTamuCSV">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addKunjunganTamuModal">
                             <i class="bi bi-plus-lg"></i> Tambah Tamu
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="card-body">
@@ -2375,6 +2353,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <div class="modal fade" id="addKunjunganTamuModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -2398,6 +2377,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
@@ -2407,12 +2387,14 @@ const Views = {
             <tr>
                 <td>${u.username}</td>
                 <td>${u.name}</td>
-                <td><span class="badge bg-${u.role === 'admin' ? 'danger' : 'secondary'}">${u.role}</span></td>
+                <td><span class="badge bg-${u.role === 'admin' ? 'danger' : (u.role === 'viewer' ? 'info' : 'secondary')}">${u.role}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-warning edit-user-btn" data-id="${u.id}" data-username="${u.username}" data-name="${u.name}" data-role="${u.role}"><i class="bi bi-pencil"></i></button>
-                    ${u.username !== 'admin' ? 
-                        `<button class="btn btn-sm btn-danger delete-user-btn" data-id="${u.id}"><i class="bi bi-trash"></i></button>` 
-                        : ''}
+                    ${App.canEdit() ? `
+                        <button class="btn btn-sm btn-warning edit-user-btn" data-id="${u.id}" data-username="${u.username}" data-name="${u.name}" data-role="${u.role}"><i class="bi bi-pencil"></i></button>
+                        ${u.username !== 'admin' ? 
+                            `<button class="btn btn-sm btn-danger delete-user-btn" data-id="${u.id}"><i class="bi bi-trash"></i></button>` 
+                            : ''}
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -2425,9 +2407,11 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2" id="downloadUsersCSV">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal">
                             <i class="bi bi-plus-lg"></i> Tambah User
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="card-body">
@@ -2447,6 +2431,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <div class="modal fade" id="addUserModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -2473,6 +2458,7 @@ const Views = {
                                     <select name="role" class="form-select">
                                         <option value="staff">Staff</option>
                                         <option value="admin">Admin</option>
+                                        <option value="viewer">Viewer</option>
                                     </select>
                                 </div>
                             </div>
@@ -2483,6 +2469,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
@@ -2500,8 +2487,10 @@ const Views = {
                 <td>${item.terapi}</td>
                 <td>${item.foto ? `<img src="uploads/${item.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${item.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-warning edit-pengobatan-btn" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger delete-pengobatan-btn" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -2517,9 +2506,11 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2" id="downloadPengobatanCSV">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPengobatanModal">
                             <i class="bi bi-plus-lg"></i> Input Data
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="card-body">
@@ -2547,6 +2538,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <div class="modal fade" id="addPengobatanModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -2600,6 +2592,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
@@ -2615,8 +2608,10 @@ const Views = {
                     <td>${item.keterangan}</td>
                     <td>${item.foto ? `<img src="uploads/${item.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${item.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                     <td class="d-print-none">
+                        ${App.canEdit() ? `
                         <button class="btn btn-sm btn-warning edit-vaksinasi-btn" data-type="${type}" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-danger delete-vaksinasi-btn" data-type="${type}" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                        ` : ''}
                     </td>
                 </tr>
             `).join('');
@@ -2635,12 +2630,15 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2 download-vaksinasi-csv-btn" data-type="${type}">
                             <i class="bi bi-filetype-csv"></i> Download CSV ${type.toUpperCase()}
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add${type.toUpperCase()}Modal">
                             <i class="bi bi-plus-lg"></i> Tambah Data ${type.toUpperCase()}
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 
+                ${App.canEdit() ? `
                 <div class="modal fade" id="add${type.toUpperCase()}Modal" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -2664,6 +2662,7 @@ const Views = {
                         </div>
                     </div>
                 </div>
+                ` : ''}
             `;
         };
 
@@ -2699,8 +2698,10 @@ const Views = {
                     <td>${item.mati ?? 0}</td>
                     <td>${item.sehat ?? 0}</td>
                     <td class="d-print-none">
+                        ${App.canEdit() ? `
                         <button class="btn btn-sm btn-warning edit-phms-btn" data-type="${type}" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-danger delete-phms-btn" data-type="${type}" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                        ` : ''}
                     </td>
                 </tr>
             `).join('');
@@ -2720,12 +2721,15 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2 download-phms-csv-btn" data-type="${type}">
                             <i class="bi bi-filetype-csv"></i> Download CSV ${type.toUpperCase()}
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPHMS${type.toUpperCase()}Modal">
                             <i class="bi bi-plus-lg"></i> Tambah Data ${type.toUpperCase()}
                         </button>
+                        ` : ''}
                     </div>
                 </div>
 
+                ${App.canEdit() ? `
                 <div class="modal fade" id="addPHMS${type.toUpperCase()}Modal" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -2749,6 +2753,7 @@ const Views = {
                         </div>
                     </div>
                 </div>
+                ` : ''}
             `;
         };
 
@@ -2782,8 +2787,10 @@ const Views = {
                     <td>${item.keterangan}</td>
                     <td>${item.foto ? `<img src="uploads/${item.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${item.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                     <td class="d-print-none">
+                        ${App.canEdit() ? `
                         <button class="btn btn-sm btn-warning edit-monitoring-btn" data-type="${type}" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-sm btn-danger delete-monitoring-btn" data-type="${type}" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                        ` : ''}
                     </td>
                 </tr>
             `).join('');
@@ -2802,12 +2809,15 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2 download-monitoring-csv-btn" data-type="${type}">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add${type}Modal">
                             <i class="bi bi-plus-lg"></i> Tambah Data
                         </button>
+                        ` : ''}
                     </div>
                 </div>
 
+                ${App.canEdit() ? `
                 <div class="modal fade" id="add${type}Modal" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -2831,6 +2841,7 @@ const Views = {
                         </div>
                     </div>
                 </div>
+                ` : ''}
             `;
         };
 
@@ -2864,8 +2875,10 @@ const Views = {
                 <td>${item.hasil}</td>
                 <td>${item.foto ? `<img src="uploads/${item.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${item.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-warning edit-surveilans-btn" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger delete-surveilans-btn" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -2881,9 +2894,11 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2" id="downloadSurveilansCSV">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSurveilansModal">
                             <i class="bi bi-plus-lg"></i> Input Data
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="card-body">
@@ -2909,6 +2924,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <div class="modal fade" id="addSurveilansModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -2933,6 +2949,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
@@ -2945,13 +2962,13 @@ const Views = {
             
             if (type === 'masuk') {
                 headers = '<th>Tanggal</th><th>No. Surat</th><th>Pengirim</th><th>Perihal</th><th>Foto</th><th class="d-print-none">Aksi</th>';
-                rows = data.map(i => `<tr><td>${i.tanggal}</td><td>${i.nomor}</td><td>${i.pengirim}</td><td>${i.perihal}</td><td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td><td class="d-print-none"><button class="btn btn-sm btn-warning edit-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-danger delete-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+                rows = data.map(i => `<tr><td>${i.tanggal}</td><td>${i.nomor}</td><td>${i.pengirim}</td><td>${i.perihal}</td><td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td><td class="d-print-none">${App.canEdit() ? `<button class="btn btn-sm btn-warning edit-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-danger delete-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-trash"></i></button>` : ''}</td></tr>`).join('');
             } else if (type === 'keluar') {
                 headers = '<th>Tanggal</th><th>No. Surat</th><th>Tujuan</th><th>Perihal</th><th>Foto</th><th class="d-print-none">Aksi</th>';
-                rows = data.map(i => `<tr><td>${i.tanggal}</td><td>${i.nomor}</td><td>${i.tujuan}</td><td>${i.perihal}</td><td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td><td class="d-print-none"><button class="btn btn-sm btn-warning edit-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-danger delete-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+                rows = data.map(i => `<tr><td>${i.tanggal}</td><td>${i.nomor}</td><td>${i.tujuan}</td><td>${i.perihal}</td><td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td><td class="d-print-none">${App.canEdit() ? `<button class="btn btn-sm btn-warning edit-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-danger delete-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-trash"></i></button>` : ''}</td></tr>`).join('');
             } else {
                 headers = '<th>Tanggal</th><th>No. Surat</th><th>Perihal</th><th>Keterangan</th><th>Foto</th><th class="d-print-none">Aksi</th>';
-                rows = data.map(i => `<tr><td>${i.tanggal}</td><td>${i.nomor}</td><td>${i.perihal}</td><td>${i.keterangan}</td><td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td><td class="d-print-none"><button class="btn btn-sm btn-warning edit-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-danger delete-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+                rows = data.map(i => `<tr><td>${i.tanggal}</td><td>${i.nomor}</td><td>${i.perihal}</td><td>${i.keterangan}</td><td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td><td class="d-print-none">${App.canEdit() ? `<button class="btn btn-sm btn-warning edit-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-danger delete-surat-btn" data-type="${type}" data-id="${i.id}"><i class="bi bi-trash"></i></button>` : ''}</td></tr>`).join('');
             }
 
             return `
@@ -2969,12 +2986,15 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2 download-surat-csv-btn" data-type="${type}">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSurat${type}Modal">
                             <i class="bi bi-plus-lg"></i> Tambah Surat ${type}
                         </button>
+                        ` : ''}
                     </div>
                 </div>
 
+                ${App.canEdit() ? `
                 <div class="modal fade" id="addSurat${type}Modal" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -2999,6 +3019,7 @@ const Views = {
                         </div>
                     </div>
                 </div>
+                ` : ''}
             `;
         };
 
@@ -3032,11 +3053,13 @@ const Views = {
                 <td>${s.stok}</td>
                 <td>${s.satuan}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-info edit-obat-btn" data-id="${s.id}" data-nama="${s.nama}" data-satuan="${s.satuan}"><i class="bi bi-pencil-square"></i> Edit Obat</button>
                     <button class="btn btn-sm btn-warning update-stock-btn" data-id="${s.id}" data-stok="${s.stok}"><i class="bi bi-pencil"></i> Edit Stok</button>
                     ${App.state.currentUser.role === 'admin' ? 
                         `<button class="btn btn-sm btn-danger delete-stock-btn" data-id="${s.id}"><i class="bi bi-trash"></i></button>` 
                         : ''}
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -3048,8 +3071,10 @@ const Views = {
                 <td>${p.jumlah}</td>
                 <td>${p.satuan}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-warning edit-pemakaian-btn" data-id="${p.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger delete-pemakaian-btn" data-id="${p.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -3079,9 +3104,11 @@ const Views = {
                                 <button class="btn btn-success btn-sm me-2" id="downloadStokCSV">
                                     <i class="bi bi-filetype-csv"></i> Download CSV
                                 </button>
+                                ${App.canEdit() ? `
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addStokModal">
                                     <i class="bi bi-plus-lg"></i> Tambah Obat Baru
                                 </button>
+                                ` : ''}
                             </div>
                         </div>
                         <div class="card-body">
@@ -3113,9 +3140,11 @@ const Views = {
                                 <button class="btn btn-success btn-sm me-2" id="downloadPemakaianCSV">
                                     <i class="bi bi-filetype-csv"></i> Download CSV
                                 </button>
+                                ${App.canEdit() ? `
                                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPemakaianModal">
                                     <i class="bi bi-plus-lg"></i> Catat Pemakaian
                                 </button>
+                                ` : ''}
                             </div>
                         </div>
                         <div class="card-body">
@@ -3140,6 +3169,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <!-- Modal Tambah Stok -->
             <div class="modal fade" id="addStokModal" tabindex="-1">
                 <div class="modal-dialog">
@@ -3199,6 +3229,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
@@ -3212,8 +3243,10 @@ const Views = {
                 <td>${i.keterangan}</td>
                 <td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-warning edit-kegiatan-btn" data-id="${i.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger delete-kegiatan-btn" data-id="${i.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -3229,9 +3262,11 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2" id="downloadKegiatanLainCSV">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addKegiatanLainModal">
                             <i class="bi bi-plus-lg"></i> Tambah Kegiatan
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="card-body">
@@ -3255,6 +3290,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <div class="modal fade" id="addKegiatanLainModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -3277,6 +3313,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
@@ -3290,8 +3327,10 @@ const Views = {
                 <td><a href="${i.link}" target="_blank">${i.link}</a></td>
                 <td>${i.foto ? `<img src="uploads/${i.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${i.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
                 <td class="d-print-none">
+                    ${App.canEdit() ? `
                     <button class="btn btn-sm btn-warning edit-kreasi-konten-btn" data-id="${i.id}"><i class="bi bi-pencil"></i></button>
                     <button class="btn btn-sm btn-danger delete-kreasi-konten-btn" data-id="${i.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
                 </td>
             </tr>
         `).join('');
@@ -3307,9 +3346,11 @@ const Views = {
                         <button class="btn btn-success btn-sm me-2" id="downloadKreasiKontenCSV">
                             <i class="bi bi-filetype-csv"></i> Download CSV
                         </button>
+                        ${App.canEdit() ? `
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addKreasiKontenModal">
                             <i class="bi bi-plus-lg"></i> Tambah Konten
                         </button>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="card-body">
@@ -3333,6 +3374,7 @@ const Views = {
                 </div>
             </div>
 
+            ${App.canEdit() ? `
             <div class="modal fade" id="addKreasiKontenModal" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -3355,6 +3397,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     }
 };
