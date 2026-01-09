@@ -1978,8 +1978,10 @@ const Views = {
                     <a href="#phms" class="nav-link ${activeRoute === 'phms' ? 'active' : ''}"><i class="bi bi-clipboard-data me-2"></i> Rekap PHMS</a>
                     <a href="#monitoring" class="nav-link ${activeRoute === 'monitoring' ? 'active' : ''}"><i class="bi bi-eye me-2"></i> Monitoring</a>
                     <a href="#surveilans" class="nav-link ${activeRoute === 'surveilans' ? 'active' : ''}"><i class="bi bi-activity me-2"></i> Surveilans</a>
+                    ${App.canEdit() ? `
                     <a href="#surat" class="nav-link ${activeRoute === 'surat' ? 'active' : ''}"><i class="bi bi-envelope me-2"></i> Surat</a>
                     <a href="#stok" class="nav-link ${activeRoute === 'stok' ? 'active' : ''}"><i class="bi bi-box-seam me-2"></i> Stok Obat</a>
+                    ` : ''}
                     <a href="#kegiatan_lain" class="nav-link ${activeRoute === 'kegiatan_lain' ? 'active' : ''}"><i class="bi bi-calendar-event me-2"></i> Kegiatan Lain</a>
                     <a href="#kunjungan_tamu" class="nav-link ${activeRoute === 'kunjungan_tamu' ? 'active' : ''}"><i class="bi bi-people-fill me-2"></i> Kunjungan Tamu</a>
                     <a href="#kreasi_konten" class="nav-link ${activeRoute === 'kreasi_konten' ? 'active' : ''}"><i class="bi bi-camera-reels me-2"></i> Kreasi Konten</a>
@@ -2247,6 +2249,7 @@ const Views = {
                 </div>
             </div>
             
+            ${App.canEdit() ? `
             <div class="card mb-4">
                 <div class="card-header bg-white">
                     <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Bahan aktivitas untuk elok</h5>
@@ -2291,6 +2294,7 @@ const Views = {
                     </div>
                 </div>
             </div>
+            ` : ''}
         `;
     },
 
