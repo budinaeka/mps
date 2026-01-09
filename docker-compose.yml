@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: puskeswan_app
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=puskeswan_db
+      - DB_USER=user
+      - DB_PASS=password
+    depends_on:
+      - db
+    volumes:
+      # Mount uploads directory to persist uploaded files
+      - ./uploads:/var/www/html/uploads
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: puskeswan_db
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=puskeswan_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - db_data:/var/lib/mysql
+      # Initialize database with schema.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
