@@ -6,11 +6,13 @@ let _cache = {
     vaksinasi: [],
     monitoring: [],
     surveilans: [],
+    phms: [],
     surat: [],
     stok_obat: [],
     pemakaian_obat: [],
     kegiatan_lain: [],
-    kunjungan_tamu: []
+    kunjungan_tamu: [],
+    kreasi_konten: []
 };
 
 const DB = {
@@ -18,8 +20,8 @@ const DB = {
         try {
             const tables = [
                 'users', 'pengobatan', 'vaksinasi', 'monitoring', 
-                'surveilans', 'surat', 'stok_obat', 'pemakaian_obat', 
-                'kegiatan_lain', 'kunjungan_tamu'
+                'surveilans', 'phms', 'surat', 'stok_obat', 'pemakaian_obat', 
+                'kegiatan_lain', 'kunjungan_tamu', 'kreasi_konten'
             ];
 
             const promises = tables.map(table => 
