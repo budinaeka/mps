@@ -12,7 +12,8 @@ let _cache = {
     pemakaian_obat: [],
     kegiatan_lain: [],
     kunjungan_tamu: [],
-    kreasi_konten: []
+    kreasi_konten: [],
+    layanan_usg: []
 };
 
 const DB = {
@@ -21,7 +22,7 @@ const DB = {
             const tables = [
                 'users', 'pengobatan', 'vaksinasi', 'monitoring', 
                 'surveilans', 'phms', 'surat', 'stok_obat', 'pemakaian_obat', 
-                'kegiatan_lain', 'kunjungan_tamu', 'kreasi_konten'
+                'kegiatan_lain', 'kunjungan_tamu', 'kreasi_konten', 'layanan_usg'
             ];
 
             const promises = tables.map(table => 

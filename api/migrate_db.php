@@ -127,6 +127,17 @@ $tables_sql = [
         link VARCHAR(255),
         foto VARCHAR(255),
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )",
+    "layanan_usg" => "CREATE TABLE IF NOT EXISTS layanan_usg (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        tanggal DATE NOT NULL,
+        nama VARCHAR(255) NOT NULL,
+        kecamatan VARCHAR(255) NOT NULL,
+        desa VARCHAR(255) NOT NULL,
+        jumlah INT NOT NULL,
+        hasil VARCHAR(255) NOT NULL,
+        foto VARCHAR(255),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )"
 ];
 

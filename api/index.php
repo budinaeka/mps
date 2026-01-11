@@ -19,7 +19,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : '';
 $allowed_tables = [
     'users', 'pengobatan', 'vaksinasi', 'monitoring', 
     'surveilans', 'phms', 'surat', 'stok_obat', 'pemakaian_obat', 
-    'kegiatan_lain', 'kunjungan_tamu', 'kreasi_konten'
+    'kegiatan_lain', 'kunjungan_tamu', 'kreasi_konten', 'layanan_usg'
 ];
 
 if ($table && !in_array($table, $allowed_tables)) {

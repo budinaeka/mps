@@ -169,6 +169,9 @@ const App = {
         } else if (route === 'surveilans') {
             contentDiv.innerHTML = Views.surveilans();
             App.initSurveilansEvents();
+        } else if (route === 'usg') {
+            contentDiv.innerHTML = Views.usg();
+            App.initUsgEvents();
         } else if (route === 'surat') {
             contentDiv.innerHTML = Views.surat();
             App.initSuratEvents();
@@ -1122,6 +1125,150 @@ const App = {
             });
         }
     },
+
+    initUsgEvents: () => {
+        const form = document.getElementById('addUsgForm');
+        if(form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                let fotoFilename = null;
+                const fileInput = form.querySelector('input[name="foto"]');
+                if (fileInput && fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    formData.append('tanggal', form.tanggal.value);
+                    formData.append('feature', 'layanan-usg');
+                    formData.append('nama', form.nama.value);
+                    try {
+                        const res = await fetch('api/upload.php', { method: 'POST', body: formData });
+                        const result = await res.json();
+                        if (res.ok) {
+                            fotoFilename = result.filename;
+                        } else {
+                            Swal.fire('Error', result.error || 'Gagal upload foto', 'error');
+                            return;
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        Swal.fire('Error', 'Terjadi kesalahan saat upload foto', 'error');
+                        return;
+                    }
+                }
+
+                const data = {
+                    tanggal: form.tanggal.value,
+                    nama: form.nama.value,
+                    kecamatan: form.kecamatan.value,
+                    desa: form.desa.value,
+                    jumlah: form.jumlah.value,
+                    hasil: form.hasil.value,
+                    foto: fotoFilename
+                };
+                DB.addToTable('layanan_usg', data);
+                App.loadPageContent('usg');
+                Swal.fire('Sukses', 'Data Layanan USG tersimpan', 'success');
+            });
+        }
+        document.querySelectorAll('.edit-usg-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                const item = DB.getTable('layanan_usg').find(i => i.id == id);
+                if (!item) return;
+                const { value: formValues } = await Swal.fire({
+                    title: 'Edit Layanan USG',
+                    html:
+                        `<input id="sw_tanggal" type="date" class="form-control mb-2" value="${item.tanggal}">` +
+                        `<input id="sw_nama" type="text" class="form-control mb-2" value="${item.nama}">` +
+                        `<input id="sw_kecamatan" type="text" class="form-control mb-2" value="${item.kecamatan}">` +
+                        `<input id="sw_desa" type="text" class="form-control mb-2" value="${item.desa}">` +
+                        `<input id="sw_jumlah" type="number" class="form-control mb-2" value="${item.jumlah}">` +
+                        `<input id="sw_hasil" type="text" class="form-control mb-2" value="${item.hasil}">` +
+                        `<div class="mb-2"><label>Ganti Foto (Opsional)</label><input id="sw_foto" type="file" class="form-control" accept="image/*"></div>`,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    preConfirm: async () => {
+                        const fileInput = document.getElementById('sw_foto');
+                        let newFoto = item.foto;
+
+                        if (fileInput.files.length > 0) {
+                            const formData = new FormData();
+                            formData.append('file', fileInput.files[0]);
+                            formData.append('tanggal', document.getElementById('sw_tanggal').value);
+                            formData.append('feature', 'layanan-usg');
+                            formData.append('nama', document.getElementById('sw_nama').value);
+
+                            try {
+                                const res = await fetch('api/upload.php', { method: 'POST', body: formData });
+                                const result = await res.json();
+                                if (res.ok) {
+                                    newFoto = result.filename;
+                                } else {
+                                    Swal.showValidationMessage(result.error || 'Gagal upload foto');
+                                    return false;
+                                }
+                            } catch (err) {
+                                Swal.showValidationMessage('Error upload foto');
+                                return false;
+                            }
+                        }
+
+                        return {
+                            tanggal: document.getElementById('sw_tanggal').value,
+                            nama: document.getElementById('sw_nama').value,
+                            kecamatan: document.getElementById('sw_kecamatan').value,
+                            desa: document.getElementById('sw_desa').value,
+                            jumlah: document.getElementById('sw_jumlah').value,
+                            hasil: document.getElementById('sw_hasil').value,
+                            foto: newFoto
+                        };
+                    }
+                });
+                if (formValues) {
+                    DB.updateInTable('layanan_usg', id, formValues);
+                    App.loadPageContent('usg');
+                }
+            });
+        });
+        document.querySelectorAll('.delete-usg-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                const ok = await Swal.fire({ title: 'Hapus data?', icon: 'warning', showCancelButton: true });
+                if (ok.isConfirmed) {
+                    DB.deleteFromTable('layanan_usg', id);
+                    App.loadPageContent('usg');
+                }
+            });
+        });
+        const usgCsvBtn = document.getElementById('downloadUsgCSV');
+        if (usgCsvBtn) {
+            usgCsvBtn.addEventListener('click', () => {
+                const rows = DB.getTable('layanan_usg');
+                const headers = ['Tanggal','Nama Pemilik','Kecamatan','Desa','Jumlah (Ekor)','Hasil'];
+                const escape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+                const csv = [headers.join(',')].concat(
+                    rows.map(r => [
+                        escape(r.tanggal),
+                        escape(r.nama),
+                        escape(r.kecamatan),
+                        escape(r.desa),
+                        escape(r.jumlah),
+                        escape(r.hasil)
+                    ].join(','))
+                ).join('\r\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `layanan-usg-${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+    },
+
     initSuratEvents: () => {
         ['masuk', 'keluar', 'keterangan'].forEach(type => {
             const form = document.getElementById(`addSurat${type}Form`);
@@ -1984,6 +2131,7 @@ const Views = {
                     ` : ''}
                     <a href="#kegiatan_lain" class="nav-link ${activeRoute === 'kegiatan_lain' ? 'active' : ''}"><i class="bi bi-calendar-event me-2"></i> Kegiatan Lain</a>
                     <a href="#kunjungan_tamu" class="nav-link ${activeRoute === 'kunjungan_tamu' ? 'active' : ''}"><i class="bi bi-people-fill me-2"></i> Kunjungan Tamu</a>
+                    <a href="#usg" class="nav-link ${activeRoute === 'usg' ? 'active' : ''}"><i class="bi bi-heart-pulse me-2"></i> Layanan USG</a>
                     <a href="#kreasi_konten" class="nav-link ${activeRoute === 'kreasi_konten' ? 'active' : ''}"><i class="bi bi-camera-reels me-2"></i> Kreasi Konten</a>
                     ${App.state.currentUser.role === 'admin' ?  
                         `<a href="#users" class="nav-link ${activeRoute === 'users' ? 'active' : ''}"><i class="bi bi-people me-2"></i> User</a>` 
@@ -2029,6 +2177,7 @@ const Views = {
             monitoring_poktan: DB.getNested('monitoring', 'poktan').length,
             monitoring_bumdes: DB.getNested('monitoring', 'bumdes').length,
             surveilans: DB.getTable('surveilans').length,
+            usg: DB.getTable('layanan_usg').reduce((acc, curr) => acc + (parseInt(curr.jumlah) || 0), 0),
             kreasi_konten: DB.getTable('kreasi_konten').length,
             kegiatan_lain: DB.getTable('kegiatan_lain').length
         };
@@ -2146,6 +2295,18 @@ const Views = {
             }
         });
 
+        // 7. Layanan USG
+        DB.getTable('layanan_usg').forEach(i => {
+            const d = getDate(i);
+            if (d >= twoWeeksAgo) {
+                activityData.push({
+                    tanggal: i.tanggal,
+                    timestamp: d.getTime(),
+                    aktivitas: `Layanan USG: ${i.nama} di Kec. ${i.kecamatan}, Desa ${i.desa}. Jumlah: ${i.jumlah} ekor. Hasil: ${i.hasil}`
+                });
+            }
+        });
+
         // Sort descending by date
         activityData.sort((a, b) => b.timestamp - a.timestamp);
 
@@ -2212,6 +2373,12 @@ const Views = {
                                     <td>Pengobatan</td>
                                     <td>-</td>
                                     <td class="text-end">${stats.pengobatan}</td>
+                                    <td>Ekor</td>
+                                </tr>
+                                <tr>
+                                    <td>Layanan USG</td>
+                                    <td>-</td>
+                                    <td class="text-end">${stats.usg}</td>
                                     <td>Ekor</td>
                                 </tr>
                                 <tr>
@@ -2943,6 +3110,96 @@ const Views = {
                                 <div class="mb-3"><label class="form-label">Desa</label><input type="text" name="desa" class="form-control" required></div>
                                 <div class="mb-3"><label class="form-label">Jenis Penyakit</label><input type="text" name="jenis_penyakit" class="form-control" required></div>
                                 <div class="mb-3"><label class="form-label">Jenis Sampel</label><input type="text" name="sampel" class="form-control" required></div>
+                                <div class="mb-3"><label class="form-label">Hasil</label><input type="text" name="hasil" class="form-control" required></div>
+                                <div class="mb-3"><label class="form-label">Foto Lampiran (Opsional)</label><input type="file" name="foto" class="form-control" accept="image/*"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+        `;
+    },
+
+    usg: () => {
+        const data = DB.getTable('layanan_usg');
+        const rows = data.map(item => `
+            <tr>
+                <td>${item.tanggal}</td>
+                <td>${item.nama}</td>
+                <td>${item.kecamatan}</td>
+                <td>${item.desa}</td>
+                <td>${item.jumlah}</td>
+                <td>${item.hasil}</td>
+                <td>${item.foto ? `<img src="uploads/${item.foto}" class="d-none d-print-block img-thumbnail report-img"><a href="uploads/${item.foto}" target="_blank" class="btn btn-sm btn-outline-primary d-print-none"><i class="bi bi-image"></i> Lihat</a>` : '-'}</td>
+                <td class="d-print-none">
+                    ${App.canEdit() ? `
+                    <button class="btn btn-sm btn-warning edit-usg-btn" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-danger delete-usg-btn" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                    ` : ''}
+                </td>
+            </tr>
+        `).join('');
+
+        return `
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Layanan USG</h5>
+                    <div>
+                        <button class="btn btn-secondary btn-sm me-2" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Cetak Laporan
+                        </button>
+                        <button class="btn btn-success btn-sm me-2" id="downloadUsgCSV">
+                            <i class="bi bi-filetype-csv"></i> Download CSV
+                        </button>
+                        ${App.canEdit() ? `
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUsgModal">
+                            <i class="bi bi-plus-lg"></i> Input Data
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Nama Pemilik</th>
+                                    <th>Kecamatan</th>
+                                    <th>Desa</th>
+                                    <th>Jumlah (Ekor)</th>
+                                    <th>Hasil</th>
+                                    <th>Foto</th>
+                                    <th class="d-print-none">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows.length ? rows : '<tr><td colspan="8" class="text-center">Belum ada data</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            ${App.canEdit() ? `
+            <div class="modal fade" id="addUsgModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="addUsgForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Input Layanan USG</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3"><label class="form-label">Tanggal</label><input type="date" name="tanggal" class="form-control" required></div>
+                                <div class="mb-3"><label class="form-label">Nama Pemilik/Peternak</label><input type="text" name="nama" class="form-control" required></div>
+                                <div class="mb-3"><label class="form-label">Kecamatan</label><input type="text" name="kecamatan" class="form-control" required></div>
+                                <div class="mb-3"><label class="form-label">Desa</label><input type="text" name="desa" class="form-control" required></div>
+                                <div class="mb-3"><label class="form-label">Jumlah (Ekor)</label><input type="number" name="jumlah" class="form-control" required></div>
                                 <div class="mb-3"><label class="form-label">Hasil</label><input type="text" name="hasil" class="form-control" required></div>
                                 <div class="mb-3"><label class="form-label">Foto Lampiran (Opsional)</label><input type="file" name="foto" class="form-control" accept="image/*"></div>
                             </div>
