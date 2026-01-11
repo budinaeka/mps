@@ -2622,8 +2622,8 @@ const Views = {
             return `
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered">
-                        <thead><tr><th>Tanggal</th><th>Kecamatan</th><th>Desa</th><th>Jumlah (Ekor)</th><th>Ket</th><th class="d-print-none">Aksi</th></tr></thead>
-                        <tbody>${rows.length ? rows : '<tr><td colspan="6" class="text-center">Belum ada data</td></tr>'}</tbody>
+                        <thead><tr><th>Tanggal</th><th>Kecamatan</th><th>Desa</th><th>Jumlah (Ekor)</th><th>Ket</th><th>Foto</th><th class="d-print-none">Aksi</th></tr></thead>
+                        <tbody>${rows.length ? rows : '<tr><td colspan="7" class="text-center">Belum ada data</td></tr>'}</tbody>
                     </table>
                 </div>
                 <div class="d-flex justify-content-between mt-2">
